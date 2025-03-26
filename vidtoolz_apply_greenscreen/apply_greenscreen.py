@@ -1,5 +1,4 @@
 import moviepy as mpy
-import argparse
 import numpy as np
 
 
@@ -35,7 +34,7 @@ def overlay_greenscreen(main_video, greenscreen_video, position, start_time=1):
 
         # Where green is high and red/blue are lower (create alpha channel)
         alpha = np.where(
-            (green_channel > 180) & (red_channel < 120) & (blue_channel < 120), 0, 255
+            (green_channel > 120) & (red_channel < 100) & (blue_channel < 90), 0, 255
         ).astype("uint8")
 
         # Create RGBA frame
@@ -72,7 +71,7 @@ def overlay_greenscreen2(main_video, greenscreen_video, position, start_time=1):
     )
 
     # Load green screen video
-    youtube_animation = mpy.VideoFileClip(greenscreen_video).subclipped(4)
+    youtube_animation = mpy.VideoFileClip(greenscreen_video)
     mask_effect = mpy.vfx.MaskColor(color=[100, 225, 35], threshold=255, stiffness=5)
     mask = mask_effect.apply(youtube_animation).to_mask()
     masked_clip = youtube_animation.with_mask(mask)

@@ -19,7 +19,7 @@ def test_create_parser():
     assert result.main_video == "test.mp4"
     assert result.greenscreen_video == "hello.mp4"
     assert result.position == "bottom"
-    assert result.output == "output.mp4"
+    assert result.output is None
     assert result.start_time == 1
 
 

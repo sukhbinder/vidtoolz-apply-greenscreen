@@ -1,5 +1,19 @@
 import vidtoolz
+import os
 from vidtoolz_apply_greenscreen.apply_greenscreen import overlay_greenscreen, write_clip
+
+
+def determine_output_path(input_file, output_file):
+    input_dir, input_filename = os.path.split(input_file)
+    name, _ = os.path.splitext(input_filename)
+
+    if output_file:
+        output_dir, output_filename = os.path.split(output_file)
+        if not output_dir:  # If no directory is specified, use input file's directory
+            return os.path.join(input_dir, output_filename)
+        return output_file
+    else:
+        return os.path.join(input_dir, f"{name}_trim.mp4")
 
 
 def create_parser(subparser):
@@ -14,7 +28,7 @@ def create_parser(subparser):
     parser.add_argument(
         "-o",
         "--output",
-        default="output.mp4",
+        default=None,
         help="Output video file name (default: output.mp4)",
     )
     parser.add_argument(
@@ -53,11 +67,13 @@ class ViztoolzPlugin:
         self.parser.set_defaults(func=self.run)
 
     def run(self, args):
+
+        output = determine_output_path(args.main_video, args.output)
         clip, fps = overlay_greenscreen(
             args.main_video, args.greenscreen_video, args.position, args.start_time
         )
-        write_clip(clip, args.output, fps)
-        print(f"{args.output} written")
+        write_clip(clip, output, fps)
+        print(f"{output} written")
 
     def hello(self, args):
         # this routine will be called when "vidtoolz "greenscreen is called."
